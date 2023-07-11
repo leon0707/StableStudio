@@ -4,9 +4,9 @@ import { StableDiffusionImage } from "@stability/stablestudio-plugin";
 import {
   base64ToBlob,
   constructPayload,
-  fetchOptions,
+  // fetchOptions,
   getImageInfo,
-  setOptions,
+  // setOptions,
   testForHistoryPlugin,
 } from "./Utilities";
 
@@ -94,7 +94,6 @@ export const createPlugin = StableStudio.createPlugin<{
     | "getStableDiffusionDefaultInput"
     | "getStableDiffusionExistingImages"
   > => {
-
     return {
       createStableDiffusionImages: async (options) => {
         if (!options) {
@@ -102,7 +101,7 @@ export const createPlugin = StableStudio.createPlugin<{
         }
 
         // fetch the current webui options (model/sampler/etc)
-        const webUIOptions = await fetchOptions(webuiHostUrl);
+        // const webUIOptions = await fetchOptions(webuiHostUrl);
 
         const { model, sampler, initialImage } = options?.input ?? {};
         options.count = options?.count ?? getStableDiffusionDefaultCount();
@@ -122,16 +121,16 @@ export const createPlugin = StableStudio.createPlugin<{
           model === "esrgan-v1-x2plus";
 
         // WebUI doesn't have the right model loaded, switch the model
-        if (model && model !== webUIOptions.sd_model_checkpoint && !isUpscale) {
-          localStorage.setItem("webui-saved-model", model);
-          const modelResponse = await setOptions(webuiHostUrl, {
-            sd_model_checkpoint: model,
-          });
+        // if (model && model !== webUIOptions.sd_model_checkpoint && !isUpscale) {
+        //   localStorage.setItem("webui-saved-model", model);
+        //   const modelResponse = await setOptions(webuiHostUrl, {
+        //     sd_model_checkpoint: model,
+        //   });
 
-          if (modelResponse.ok) {
-            console.log("applied model");
-          }
-        }
+        //   if (modelResponse.ok) {
+        //     console.log("applied model");
+        //   }
+        // }
 
         // Construct payload for webui
         const data = await constructPayload(
@@ -151,6 +150,7 @@ export const createPlugin = StableStudio.createPlugin<{
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: "Basic xxx",
             },
             body: JSON.stringify(data),
           }
@@ -213,7 +213,13 @@ export const createPlugin = StableStudio.createPlugin<{
       },
 
       getStableDiffusionModels: async () => {
-        const response = await fetch(`${webuiHostUrl}/sdapi/v1/sd-models`);
+        const response = await fetch(`${webuiHostUrl}/sdapi/v1/sd-models`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Basic xxx",
+          },
+        });
         const responseData = await response.json();
 
         return responseData.map((model: any) => ({
@@ -246,7 +252,7 @@ export const createPlugin = StableStudio.createPlugin<{
   let webuiHostUrl = localStorage.getItem("webui-host-url");
 
   if (!webuiHostUrl || webuiHostUrl === "") {
-    webuiHostUrl = "http://127.0.0.1:7861";
+    webuiHostUrl = "http://54.196.180.61:7861";
   }
 
   return {
@@ -266,7 +272,13 @@ export const createPlugin = StableStudio.createPlugin<{
     },
 
     getStableDiffusionSamplers: async () => {
-      const response = await fetch(`${webuiHostUrl}/sdapi/v1/samplers`);
+      const response = await fetch(`${webuiHostUrl}/sdapi/v1/samplers`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Basic xxx",
+        },
+      });
       const responseData = await response.json();
 
       return responseData.map((sampler: any) => ({

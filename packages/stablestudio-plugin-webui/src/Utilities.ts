@@ -22,6 +22,7 @@ export async function fetchOptions(baseUrl: string | undefined) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Basic xxx",
     },
   });
 
@@ -33,6 +34,7 @@ export async function setOptions(baseUrl: string | undefined, options: any) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Basic xxx",
     },
     body: JSON.stringify(options),
   });
@@ -40,10 +42,7 @@ export async function setOptions(baseUrl: string | undefined, options: any) {
   return await optionsResponse.json();
 }
 
-export async function getImageInfo(
-  baseUrl: string | null,
-  base64image: any
-) {
+export async function getImageInfo(baseUrl: string | null, base64image: any) {
   const imageInfoResponse = await fetch(`${baseUrl}/sdapi/v1/png-info`, {
     method: "POST",
     headers: {
